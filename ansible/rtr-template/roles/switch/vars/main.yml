@@ -1,0 +1,27 @@
+---
+core_switch:
+   - { hostname: esw1, intf00_desc: to_inet, intf00_ip: 10.100.12.2, intf01: false, intfvl10_desc: LAN, intfvl10_ip: 10.100.200.1, def_gw: 10.100.12.1, DHCP: true, dhcp_exclude1_start: 10.100.200.1, dhcp_exclude1_end: 10.100.200.10, dhcp_network: 10.100.200.0, dhcp_netmask: 255.255.255.0, dhcp_gateway: 10.100.200.1}
+   - { hostname: esw2, intf00_desc: to_inet, intf00_ip: 10.101.23.2, intf01: false, intfvl10_desc: LAN, intfvl10_ip: 10.101.201.1, def_gw: 10.101.23.1, DHCP: true, dhcp_exclude1_start: 10.101.201.1, dhcp_exclude1_end: 10.101.201.10, dhcp_network: 10.101.201.0, dhcp_netmask: 255.255.255.0, dhcp_gateway: 10.101.201.1}
+
+access_switch:
+   - { hostname: esw3, mngt_ip: 10.100.200.2, user1_vlan_desc: user1, user1_vlan_num: 10, dump_vlan_desc: dump_vlan, dump_vlan_num: 999, def_gw: 10.100.200.1}
+   - { hostname: esw4, mngt_ip: 10.101.201.2, user1_vlan_desc: user1, user1_vlan_num: 10, dump_vlan_desc: dump_vlan, dump_vlan_num: 999, def_gw: 10.101.201.1}
+
+switch_intf:
+   - FastEthernet1/0
+   - FastEthernet1/1
+   - FastEthernet1/2
+   - FastEthernet1/3
+   - FastEthernet1/4
+   - FastEthernet1/5
+   - FastEthernet1/6
+   - FastEthernet1/7
+   - FastEthernet1/8
+   - FastEthernet1/9
+   - FastEthernet1/10
+   - FastEthernet1/11
+   - FastEthernet1/12
+   - FastEthernet1/13
+   - FastEthernet1/14
+   - FastEthernet1/15
+

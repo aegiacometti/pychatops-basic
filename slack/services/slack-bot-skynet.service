@@ -1,0 +1,15 @@
+[Unit]
+Description=Slack ChatOps Bot Service - Skynet
+After=network.target
+
+[Service]
+User=netauto
+Group=netauto
+EnvironmentFile=/etc/environment
+Restart=always
+RestartPreventExitStatus=SIGHUP
+RestartSec=5
+ExecStart=/usr/bin/python3 ${NETORCHESTRA}pychatops/slack/slack-bot-skynet.py
+
+[Install]
+WantedBy=default.target

@@ -1,0 +1,60 @@
+{% extends "base.j2"%}
+
+{% block core_access %}
+!
+{% if item.DHCP %} 
+no ip dhcp conflict logging
+ip dhcp excluded-address {{item.dhcp_exclude1_start}} {{item.dhcp_exclude1_end}}
+!
+ip dhcp pool POOL1
+   network {{item.dhcp_network}} {{item.dhcp_netmask}}
+   default-router {{item.dhcp_gateway}}
+   dns-server 192.168.201.2
+{% endif %}
+!         
+!
+interface FastEthernet0/0
+ description {{item.intf00_desc}}
+ ip address {{item.intf00_ip}} 255.255.255.0
+ no ip redirects
+ no ip proxy-arp
+ duplex auto
+ speed auto
+ !
+!
+{% if item.intf01 %}
+interface FastEthernet0/1
+ description {{item.intf01_desc}}
+ ip address {{item.intf01_ip}} 255.255.255.0
+ no ip redirects
+ no ip proxy-arp
+ duplex auto
+ speed auto
+ !
+{% endif %}
+!
+{% for interface in switch_intf %}
+interface {{ interface }}
+ switchport access vlan 10
+ spanning-tree portfast
+ !
+{% endfor %}
+!
+!
+vlan 10
+ name user1
+!
+spanning-tree vlan 10
+!
+interface vlan 10
+ description {{item.intfvl10_desc}}
+ ip address {{item.intfvl10_ip}} 255.255.255.0
+ no ip redirects
+ no ip proxy-arp
+!
+!
+router eigrp 1
+ network 10.0.0.0 0.255.255.255
+ no auto-summary
+!
+{% endblock %}

@@ -1,0 +1,3 @@
+# Authorize BOT on channel
+# enter one channel ID per line
+CRU05LYSC

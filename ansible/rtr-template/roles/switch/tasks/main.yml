@@ -1,0 +1,9 @@
+---
+- name: Generate configuration files core switches
+  template: src=core_switch.j2 dest=/home/adrian/ansible/rtr-template/CFGS/{{item.hostname}}.cfg
+  with_items: "{{ core_switch }}"
+
+- name: Generate configuration files access switches
+  template: src=access_switch.j2 dest=/home/adrian/ansible/rtr-template/CFGS/{{item.hostname}}.cfg
+  with_items: "{{ access_switch }}"
+

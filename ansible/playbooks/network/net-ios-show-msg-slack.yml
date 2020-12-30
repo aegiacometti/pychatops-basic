@@ -1,0 +1,48 @@
+#ansible-playbook net-ios-show-msg-slack.yml --extra-vars "cmd='ip route' source='source_ansible_inventory_name' channel=channel username='username' bot_name=bot_name"
+---
+- name: IOS show cmd
+  hosts: '{{ source }}'
+  gather_facts: false
+  connection: network_cli
+
+  tasks:
+
+    - name: IOS show cmd
+      ios_command:
+        commands: '{{ cmd }}'
+      register: output_ios
+      ignore_errors: yes
+      when: platform == 'ios'
+
+    - name: ASA show cmd
+      asa_command:
+        commands: '{{ cmd }}'
+      register: output_asa
+      ignore_errors: yes
+      when: platform == 'asa'
+
+    - name: IOS - Send message to Slack using a python script
+      command:
+        argv:
+          - python3
+          - scripts/net-ios-show-msg-slack.py
+          - "{{ output_ios }}"
+          - "{{ inventory_hostname }}"
+          - "{{ channel }}"
+          - "{{ username }}"
+          - "{{ bot_name }}"
+      delegate_to: localhost
+      when: platform == 'ios'
+
+    - name: ASA - Send message to Slack using a python script
+      command:
+        argv:
+          - python3
+          - scripts/net-ios-show-msg-slack.py
+          - "{{ output_asa }}"
+          - "{{ inventory_hostname }}"
+          - "{{ channel }}"
+          - "{{ username }}"
+          - "{{ bot_name }}"
+      delegate_to: localhost
+      when: platform == 'asa'

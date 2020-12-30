@@ -1,0 +1,5 @@
+# Authorized userID to execute commands
+# enter one user ID per line
+UQYUAN25V
+UR49XH81Y
+US56MNDRS

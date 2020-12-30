@@ -1,0 +1,27 @@
+{
+  "neteng": {
+    "user_ids": [
+    ],
+    "cmds": [
+      "all"
+    ]
+  },
+  "im": {
+    "user_ids": [
+    ],
+    "cmds": [
+      "help",
+      "status_vpn",
+      "list_vpn",
+      "reset_vpn"
+    ]
+  },
+  "free": {
+    "user_ids": [
+      "all"
+    ],
+    "cmds": [
+      "help"
+    ]
+  }
+}

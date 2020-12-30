@@ -1,0 +1,106 @@
+#U01252HKH9D
+delay = 5
+<@U01252HKH9D> help
+
+delay = 5
+<@U01252HKH9D> help show.inventory
+
+delay = 5
+<@U01252HKH9D> show.inventory
+
+delay = 5
+<@U01252HKH9D> help block.ip
+
+delay = 60
+<@U01252HKH9D> block.ip 10.10.10.10
+
+delay = 5
+<@U01252HKH9D> help link.list
+
+delay = 5
+<@U01252HKH9D> link.list
+
+delay = 5
+<@U01252HKH9D> help link.status
+
+delay = 120
+<@U01252HKH9D> link.status hqmpls
+
+delay = 120
+<@U01252HKH9D> link.status hqmpls detailed
+
+delay = 5
+<@U01252HKH9D> help ping
+
+delay = 60
+<@U01252HKH9D> ping hq-core google.com
+
+delay = 5
+<@U01252HKH9D> help mping
+
+delay = 180
+<@U01252HKH9D> mping src=network dst=network
+
+delay = 5
+<@U01252HKH9D> help mping.async
+
+delay = 180
+<@U01252HKH9D> mping.async src=branch-core,hq-core dst=8.8.8.8,isp-mpls,google.com
+
+delay = 5
+<@U01252HKH9D> help trace
+
+delay = 60
+<@U01252HKH9D> trace hq-core 8.8.8.8
+
+delay = 5
+<@U01252HKH9D> help mtrace
+
+delay = 120
+<@U01252HKH9D> mtrace src=network dst=google.com
+
+delay = 5
+<@U01252HKH9D> help show
+
+delay = 60
+<@U01252HKH9D> show hq-core "show ip arp"
+
+delay = 5
+<@U01252HKH9D> help mshow
+
+delay = 120
+<@U01252HKH9D> mshow src=network "show ip arp"
+
+delay = 5
+<@U01252HKH9D> help conf
+
+delay = 60
+<@U01252HKH9D> conf hq-core "ip route 10.10.10.20 255.255.255.255 null 0"
+
+delay = 5
+<@U01252HKH9D> help mconf
+
+delay = 120
+<@U01252HKH9D> mconf src=hq-core,hq-lan "ip route 10.10.10.20 255.255.255.255 null 0"
+
+#U01252HKH9D
+delay = 5
+<@U01252HKH9D> help check.vpn
+
+delay = 60
+<@U01252HKH9D> check.vpn
+
+delay = 5
+<@U01252HKH9D> help reset.vpn
+
+delay = 60
+<@U01252HKH9D> reset.vpn 2
+
+delay = 60
+<@U01252HKH9D> show vpn-bkp "show route"
+
+delay = 5
+<@U01252HKH9D> help asa.pkt.trace
+
+delay = 60
+<@U01252HKH9D> asa.pkt.trace "input inside icmp 10.100.200.6 8 8 10.101.201.1"

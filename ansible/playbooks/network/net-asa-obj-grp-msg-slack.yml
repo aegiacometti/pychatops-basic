@@ -1,0 +1,109 @@
+#ansible-playbook net-asa-pkt-trace-msg-slack.yml --extra-vars '{"source": "source", "cmd": "cmd", "channel": "channel", "username": "username", "bot_name": "bot_name"}'
+---
+- name: Add IP to object group in Firewalls
+  hosts: '{{ source }}'
+  gather_facts: no
+  connection: network_cli
+  strategy: free
+
+  tasks:
+
+    - name: ASA - Verify failover
+      asa_command:
+        commands:
+          - show failover
+      register: output_failover
+      ignore_errors: yes
+      when: platform == "asa"
+
+    - name: ASA - Verify if standanlone or failover Primary
+      command:
+        argv:
+          - python3
+          - scripts/net-asa-standalon-or-failover-primary.py
+          - "{{ inventory_hostname }}"
+          - "{{ output_failover }}"
+          - "{{ channel }}"
+          - "{{ username }}"
+          - "{{ bot_name }}"
+          - "{{ task_id }}"
+      register: if_standalone_or_failover
+      delegate_to: localhost
+      when: platform == "asa"
+
+    - name: ASA - Verify IP already in object group
+      asa_command:
+        commands:
+          - show running-config object-group id {{ object_group }}
+      register: output_verify_already
+      ignore_errors: yes
+      when: platform == "asa" and if_standalone_or_failover.stdout_lines[0] == "yes"
+
+    - name: ASA - Verify if IP already in object group
+      command:
+        argv:
+          - python3
+          - scripts/net-asa-obj-grp-already-msg-slack.py
+          - "{{ inventory_hostname }}"
+          - "{{ output_verify_already }}"
+          - "{{ ip_address }}"
+          - "{{ object_group }}"
+          - "{{ channel }}"
+          - "{{ username }}"
+          - "{{ bot_name }}"
+          - "{{ task_id }}"
+      register: already_in_object_group
+      delegate_to: localhost
+      when: platform == "asa" and if_standalone_or_failover.rc == 0 and if_standalone_or_failover.stdout_lines[0] == "yes"
+
+    - name: ASA - Add IP to object group
+      asa_config:
+        lines:
+          - network-object {{ ip_address }}
+        parents: ['object-group network {{ object_group }}']
+        save: yes
+      register: output_add
+      ignore_errors: yes
+      when: platform == "asa" and if_standalone_or_failover.stdout_lines[0] == "yes" and already_in_object_group.stdout_lines[0] == "no"
+
+    - name: ASA - Verify IP in object group
+      asa_command:
+        commands:
+          - show running-config object-group id {{ object_group }}
+      register: output_verify
+      ignore_errors: yes
+      when: platform == "asa" and output_add.rc is not defined and if_standalone_or_failover.stdout_lines[0] == "yes" and already_in_object_group.stdout_lines[0] == "no"
+
+    - name: ASA - Send message to Slack using a python script
+      command:
+        argv:
+          - python3
+          - scripts/net-asa-obj-grp-msg-slack.py
+          - "{{ inventory_hostname }}"
+          - "{{ ip_address }}"
+          - "{{ object_group }}"
+          - "{{ output_add }}"
+          - "{{ output_verify }}"
+          - "{{ channel }}"
+          - "{{ username }}"
+          - "{{ bot_name }}"
+          - "{{ task_id }}"
+      delegate_to: localhost
+      when: platform == "asa" and if_standalone_or_failover.stdout_lines[0] == "yes" and already_in_object_group.stdout_lines[0] == "no"
+
+    - name: FMC - Operate and send message to Slack
+      command:
+        argv:
+          - python3
+          - scripts/net-fmc-ip-to-networkgroups-msg-slack.py
+          - "{{ inventory_hostname }}"
+          - "{{ ansible_host }}"
+          - "{{ function }}"
+          - "{{ object_group }}"
+          - "{{ ip_address }}"
+          - "{{ channel }}"
+          - "{{ username }}"
+          - "{{ bot_name }}"
+          - "{{ task_id }}"
+      delegate_to: localhost
+      when: platform == "fmc"

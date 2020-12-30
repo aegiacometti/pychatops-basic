@@ -1,0 +1,73 @@
+# usage example: ansible-playbook net-ping.yml --extra-vars '{"source": "ansible_hostname", "destination": [list of items], "count": , "count", "channel": "channel", "username": "username", "bot_name": "bot_name"}'
+---
+- name: Net multiple destinations ping playbook
+  hosts: '{{ source }}'
+  gather_facts: no
+  connection: network_cli
+  tasks:
+
+    - name: Net ping
+      ios_ping:
+        dest: '{{ item }}'
+        count: '{{ count }}'
+      register: output_1
+      ignore_errors: yes
+      with_items: '{{ destination }}'
+      when: platform == "ios"
+
+    - name: IOS - Send message to Slack using a python script
+      command:
+        argv:
+          - python3
+          - scripts/net-mping-msg-slack.py
+          - "{{ output_1 }}"
+          - "{{ inventory_hostname }}"
+          - "{{ destination }}"
+          - "{{ channel }}"
+          - "{{ username }}"
+          - "{{ bot_name }}"
+      when: platform == "ios"
+      delegate_to: localhost
+
+    - name: Check connection to Server
+      wait_for_connection:
+        connect_timeout: 5
+        timeout: 5
+      register: connection
+      ignore_errors: yes
+      with_items: '{{ destination }}'
+      delegate_to: '{{ inventory_hostname }}'
+      when: platform == "win"
+
+    - name: Message to slack if connection failed
+      command:
+        argv:
+          - python3
+          - scripts/win-os-connection-failed-msg-slack.py
+          - "{{ connection }}"
+          - "{{ source }}"
+          - "{{ channel }}"
+          - "{{ username }}"
+          - "{{ bot_name }}"
+      delegate_to: localhost
+
+    - name: Win ping
+      win_command: 'ping -w 2000 {{ item }}'
+      register: output_2
+      ignore_errors: yes
+      delegate_to: '{{ inventory_hostname }}'
+      with_items: '{{ destination }}'
+      when: platform == "win"
+
+    - name: Win - Send message to Slack using a python script
+      command:
+        argv:
+          - python3
+          - scripts/win-os-mping-msg-slack.py
+          - "{{ inventory_hostname }}"
+          - "{{ output_2 }}"
+          - "{{ channel }}"
+          - "{{ username }}"
+          - "{{ bot_name }}"
+      when: platform == "win"
+      delegate_to: localhost

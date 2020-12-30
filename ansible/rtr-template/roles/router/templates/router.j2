@@ -1,0 +1,134 @@
+no service pad
+service tcp-keepalives-in
+service tcp-keepalives-out
+service timestamps debug datetime msec localtime show-timezone
+service timestamps log datetime msec localtime show-timezone
+service password-encryption
+!
+hostname {{item.hostname}}
+!
+boot-start-marker
+boot-end-marker
+!
+logging buffered 32000
+no logging console
+enable secret 0 cisco
+!
+aaa new-model
+!
+!
+aaa authentication login default local-case
+aaa authorization exec default local 
+!
+!
+!
+!
+!
+aaa session-id common
+!
+!
+!
+!
+no ip source-route
+ip options drop
+!
+!
+!
+!
+ip dhcp bootp ignore
+!
+!         
+ip cef
+no ip domain lookup
+ip domain name quadrant.edu
+no ipv6 cef
+!
+!
+!
+!
+username cisco privilege 15 secret 0 cisco
+!
+!
+ip ssh version 2
+!
+!
+!
+! 
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface FastEthernet0/0
+ description {{item.intf00_desc}}
+ ip address {{item.intf00_ip}} 255.255.255.0
+ no ip redirects
+ no ip proxy-arp
+ duplex auto
+ speed auto
+ !
+!
+interface FastEthernet0/1
+ description {{item.intf01_desc}}
+ ip address {{item.intf01_ip}} 255.255.255.0
+ no ip redirects
+ no ip proxy-arp
+ duplex auto
+ speed auto
+ !
+!
+{% if item.intf10 %}
+interface FastEthernet1/0
+ description {{item.intf10_desc}}
+ ip address {{item.intf10_ip}} 255.255.255.0
+ no ip redirects
+ no ip proxy-arp
+ duplex auto
+ speed auto
+ !
+{% endif %}
+!         
+no ip http server
+no ip http secure-server
+!
+router eigrp 1
+ network 10.0.0.0 0.255.255.255
+ no auto-summary
+!
+ip route 0.0.0.0 0.0.0.0 {{item.def_gw}}
+!
+!
+!
+!
+snmp-server community snmpCommunity rw
+!
+!
+!
+!
+control-plane
+!
+banner login %
+
+Unauthorized access is prohibited!
+
+%
+!
+line con 0
+ exec-timeout 20 0
+ logging synchronous
+line aux 0
+ exec-timeout 0 1
+ no exec
+ transport output none
+line vty 0 15
+ exec-timeout 20 0
+ logging synchronous
+ transport input ssh
+ transport output ssh
+!
+ntp server 1.0.0.1
+end

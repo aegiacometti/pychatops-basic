@@ -1,0 +1,6 @@
+---
+- name: Generate core switches configuration files
+  hosts: localhost
+
+  roles:
+    - switch

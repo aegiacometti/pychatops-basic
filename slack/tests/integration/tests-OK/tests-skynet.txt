@@ -1,0 +1,40 @@
+#U012D2MMY78
+
+delay = 5
+<@U012D2MMY78> help
+
+delay = 5
+<@U012D2MMY78> help bot.list
+
+delay = 5
+<@U012D2MMY78> bot.list
+
+delay = 5
+<@U012D2MMY78> help bot.cmd
+
+delay = 10
+<@U012D2MMY78> bot.cmd bot-net status
+
+delay = 10
+<@U012D2MMY78> bot.cmd bot-net stop
+
+delay = 10
+<@U012D2MMY78> bot.cmd bot-net status
+
+delay = 10
+<@U012D2MMY78> bot.cmd bot-net start
+
+delay = 10
+<@U012D2MMY78> bot.cmd bot-net status
+
+delay = 5
+<@U012D2MMY78> help bot.log
+
+delay = 15
+<@U012D2MMY78> bot.log bot-net
+
+delay = 5
+<@U012D2MMY78> help pull.update
+
+delay = 15
+<@U012D2MMY78> pull.updates

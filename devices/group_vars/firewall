@@ -1,0 +1,7 @@
+ansible_user: bot
+ansible_password: bot123
+username: bot
+password: bot123
+ansible_become: yes
+ansible_become_method: enable
+ansible_become_pass: cisco

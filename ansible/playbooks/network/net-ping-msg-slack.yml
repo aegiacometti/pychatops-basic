@@ -1,0 +1,48 @@
+# usage example: ansible-playbook net-ping.yml --extra-vars "source=ansible_hostname destination=ip/hostname count=count channel=channel username=username bot_name=bot_name"
+---
+- name: Net ping playbook
+  hosts: '{{ source }}'
+  gather_facts: no
+  connection: network_cli
+  tasks:
+
+    - name: Net ping
+      ios_ping:
+        dest: '{{ destination }}'
+        count: '{{ count }}'
+      register: output
+      when: platform == "ios"
+      ignore_errors: yes
+
+    - name: Win ping
+      win_command: 'ping -w 2000 {{ item }}'
+      register: output_2
+      ignore_errors: yes
+      with_items: '{{ destination }}'
+      when: platform == "win"
+
+    - name: IOS - Send message to Slack using a python script
+      command:
+        argv:
+          - python3
+          - scripts/net-ping-msg-slack.py
+          - "{{ inventory_hostname }}"
+          - "{{ output }}"
+          - "{{ channel }}"
+          - "{{ username }}"
+          - "{{ bot_name }}"
+      delegate_to: localhost
+      when: platform == "ios"
+
+    - name: Win - Send message to Slack using a python script
+      command:
+        argv:
+          - python3
+          - scripts/win-os-ping-msg-slack.py
+          - "{{ inventory_hostname }}"
+          - "{{ output_2 }}"
+          - "{{ channel }}"
+          - "{{ username }}"
+          - "{{ bot_name }}"
+      when: platform == "win"
+      delegate_to: localhost

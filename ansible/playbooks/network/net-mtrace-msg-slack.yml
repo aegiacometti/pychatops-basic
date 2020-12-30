@@ -1,0 +1,70 @@
+# usage example: ansible-playbook net-trace-msg-slack.yml --extra-vars "source=ansible_hostname destination=[ip/hostname] channel=channel username=username bot_name=bot_name"
+---
+- name: Traceroute playbook
+  hosts: '{{ source }}'
+  gather_facts: no
+  connection: network_cli
+  tasks:
+
+    - name: IOS traceroute cmd
+      ios_command:
+        commands: "traceroute {{ item }} ttl 1 15 timeout 1 probe 2"
+      register: output_ios
+      with_items: '{{ destination }}'
+      when: platform == "ios"
+      ignore_errors: yes
+
+    - name: IOS - Send message to Slack using a python script
+      command:
+        argv:
+          - python3
+          - scripts/net-ios-mtrace-msg-slack.py
+          - "{{ inventory_hostname }}"
+          - "{{ output_ios }}"
+          - "{{ channel }}"
+          - "{{ username }}"
+          - "{{ bot_name }}"
+      delegate_to: localhost
+      when: platform == "ios"
+
+    - name: Check connection to Server
+      wait_for_connection:
+        connect_timeout: 5
+        timeout: 5
+      register: connection
+      ignore_errors: yes
+      with_items: '{{ destination }}'
+      delegate_to: '{{ inventory_hostname }}'
+      when: platform == "win"
+
+    - name: Message to slack if connection failed
+      command:
+        argv:
+          - python3
+          - scripts/win-os-connection-failed-msg-slack.py
+          - "{{ connection }}"
+          - "{{ source }}"
+          - "{{ channel }}"
+          - "{{ username }}"
+          - "{{ bot_name }}"
+      delegate_to: localhost
+
+    - name: Win traceroute cmd
+      win_command: "tracert -h 15 -w 1000  {{ item }}"
+      register: output_win
+      with_items: '{{ destination }}'
+      when: platform == "win"
+      ignore_errors: yes
+
+    - name: Win - Send message to Slack using a python script
+      command:
+        argv:
+          - python3
+          - scripts/win-os-mtrace-msg-slack.py
+          - "{{ inventory_hostname }}"
+          - "{{ output_win }}"
+          - "{{ channel }}"
+          - "{{ username }}"
+          - "{{ bot_name }}"
+      delegate_to: localhost
+      when: platform == "win"

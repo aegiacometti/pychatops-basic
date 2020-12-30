@@ -1,0 +1,5 @@
+#link_id, site, type, device, interface, bw_Mbps, monitor-ip, isp_link_id
+ispmpls, isp, mpls, isp-pe-1, fa0/0, 100, 10.0.0.2,na
+hqmpls1, headquarter, mpls, hq-core, fa0/0, 100, 10.0.13.2, na
+hqint1, headquarter, internet, hq-core-1, fa1/0, 100, 10.0.0.2, na
+br1mpls1, branch-1, mpls, branch-1-co-1, fa0/0, 100, 10.0.12.2, na

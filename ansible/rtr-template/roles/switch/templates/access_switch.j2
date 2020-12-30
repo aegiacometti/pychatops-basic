@@ -1,0 +1,27 @@
+{% extends "base.j2"%}
+
+{% block core_access %}
+!
+{% for interface in switch_intf %}
+interface {{ interface }}
+ switchport access vlan {{ item.user1_vlan_num }}
+ spanning-tree portfast
+ !
+{% endfor %}
+!
+vlan {{item.user1_vlan_num}}
+ name {{item.user1_vlan_desc}}
+vlan {{item.dump_vlan_num}}
+ name {{item.dump_vlan_desc}}
+!
+spanning-tree vlan {{item.user1_vlan_num}}
+spanning-tree vlan {{item.dump_vlan_num}}
+!
+interface vlan 10
+ description {{item.user1_vlan_desc}}
+ ip address {{item.mngt_ip}} 255.255.255.0
+ no ip redirects
+ no ip proxy-arp
+!
+!
+{% endblock %}

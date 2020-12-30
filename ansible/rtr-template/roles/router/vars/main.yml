@@ -1,0 +1,6 @@
+---
+routers:
+  - { hostname: r1, intf00_desc: to_pc, intf00_ip: 10.0.0.2, intf01_desc: to_r2, intf01_ip: 10.0.12.1, intf10: true, intf10_desc: to_r3, intf10_ip: 10.0.13.1, def_gw: 10.0.0.1}
+  - { hostname: r2, intf00_desc: to_r1, intf00_ip: 10.0.12.2, intf01_desc: to_inside, intf01_ip: 10.100.12.1, intf10: false, def_gw: 10.0.12.1}
+  - { hostname: r3, intf00_desc: to_r1, intf00_ip: 10.0.13.2, intf01_desc: to_inside, intf01_ip: 10.101.23.1, intf10: false, def_gw: 10.0.13.1}
+

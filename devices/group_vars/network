@@ -1,0 +1,4 @@
+ansible_user: bot
+ansible_password: bot123
+username: bot
+password: bot123
